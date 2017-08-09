@@ -15,14 +15,8 @@ function varargout = CCA_TRANSFORMACIJA(varargin)
 %      unrecognized property name or invalid value makes property application
 %      stop.  All inputs are passed to CCA_TRANSFORMACIJA_OpeningFcn via varargin.
 %
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%      instance to run (singleton)".
-%
-% See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help CCA_TRANSFORMACIJA
-
-% Last Modified by GUIDE v2.5 03-Mar-2015 22:10:34
+% Last Modified by GUIDE v2.5 08-Aug-2017 12:09:24
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -82,27 +76,27 @@ function LoadData_Callback(hObject, eventdata, handles)
 fileName=uigetfile('*.xlsx')
 handles.fileName=fileName
 guidata(hObject,handles)
-setPopupmenuString(handles.elektroda1,eventdata,handles)
-setPopupmenuString(handles.elektroda2,eventdata,handles)
-set(handles.elektroda1,'callback','CCA_TRANSFORMACIJA(''updateAxes'',gcbo,[],guidata(gcbo))')
-set(handles.elektroda2,'callback','CCA_TRANSFORMACIJA(''updateAxes'',gcbo,[],guidata(gcbo))')
+setPopupmenuString(handles.electrode1,eventdata,handles)
+setPopupmenuString(handles.electrode2,eventdata,handles)
+set(handles.electrode1,'callback','CCA_TRANSFORMACIJA(''updateAxes'',gcbo,[],guidata(gcbo))')
+set(handles.electrode2,'callback','CCA_TRANSFORMACIJA(''updateAxes'',gcbo,[],guidata(gcbo))')
 
 
 
 
-% --- Executes on selection change in elektroda1.
-function elektroda1_Callback(hObject, eventdata, handles)
-% hObject    handle to elektroda1 (see GCBO)
+% --- Executes on selection change in electrode1.
+function electrode1_Callback(hObject, eventdata, handles)
+% hObject    handle to electrode1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns elektroda1 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from elektroda1
+% Hints: contents = cellstr(get(hObject,'String')) returns electrode1 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from electrode1
 
 
 % --- Executes during object creation, after setting all properties.
-function elektroda1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to elektroda1 (see GCBO)
+function electrode1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to electrode1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -113,19 +107,19 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in elektroda2.
-function elektroda2_Callback(hObject, eventdata, handles)
-% hObject    handle to elektroda2 (see GCBO)
+% --- Executes on selection change in electrode2.
+function electrode2_Callback(hObject, eventdata, handles)
+% hObject    handle to electrode2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns elektroda2 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from elektroda2
+% Hints: contents = cellstr(get(hObject,'String')) returns electrode2 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from electrode2
 
 
 % --- Executes during object creation, after setting all properties.
-function elektroda2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to elektroda2 (see GCBO)
+function electrode2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to electrode2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -150,38 +144,38 @@ y=a(:,yColNum);
 
 
 function updateAxes(hObject,eventdata,handles)
-pozicija=[216 170;252 169;195 189;235 189;273 190;130 209;173 212;216 213;253 212;297 212;341 211;150 232;193 232;234 232;276 232;320 230;129 257;172 254;213 254;255 254;296 254;340 257;136 369;235 358;333 367;210 343;257 342;182 390;234 400;286 391;203 418;267 419]
-xColNum=get(handles.elektroda1,'value');
-yColNum=get(handles.elektroda2,'value');
+position=[216 170;252 169;195 189;235 189;273 190;130 209;173 212;216 213;253 212;297 212;341 211;150 232;193 232;234 232;276 232;320 230;129 257;172 254;213 254;255 254;296 254;340 257;136 369;235 358;333 367;210 343;257 342;182 390;234 400;286 391;203 418;267 419];
+xColNum=get(handles.electrode1,'value');
+yColNum=get(handles.electrode2,'value');
 fileName=handles.fileName;
 [x, y]=readExcelColumns(fileName,xColNum,yColNum);
 RGB=imread('kapa_elektroda.jpg');
-imshow('kapa_elektroda.jpg', 'Parent', handles.axes1);%slika elektroda na glavi
-Fs=128;  %1sekunda          % [Hz]
+imshow('kapa_elektroda.jpg', 'Parent', handles.axes1);%picture showing electrodes on head
+Fs=128;  %1second          % [Hz]
 fftwindow=2*Fs;             % data length [samples]
 fftshift=round(0.5*Fs);
 eventFreq=[4.5:0.5:20.5];
-prvi_podatak = x;
-drugi_podatak = y;
-rezultat = prvi_podatak-drugi_podatak;
-broj_frekv=length(eventFreq);
+first_data = x;
+second_data = y;
+result = first_data-second_data;
+num_freq=length(eventFreq);
 % get startingpoints of fft frame analysis
-startpoints=1:fftshift:size(prvi_podatak,1)-fftwindow;
+startpoints=1:fftshift:size(first_data,1)-fftwindow;
 % reshape data and filter
 dataframed=zeros(fftwindow,1,length(startpoints));
-if prvi_podatak ~= drugi_podatak
+if first_data ~= second_data
 for n=1:3
     if n==1
-        rezultat = prvi_podatak;
+        result = first_data;
     else if n==2
-            rezultat = drugi_podatak;
+            result = second_data;
         else
-            rezultat = prvi_podatak-drugi_podatak;
+            result = first_data-second_data;
         end
     end
     for n2=1:length(startpoints)
         
-        dataframed(:,:,n2)=rezultat(startpoints(n2)+(0:fftwindow-1),:);
+        dataframed(:,:,n2)=result(startpoints(n2)+(0:fftwindow-1),:);
         
     end
     
@@ -242,8 +236,61 @@ for n=1:3
         end
         
     end
-    RGB = insertShape(RGB, 'FilledCircle',[ pozicija(xColNum,:) 10], 'Color', 'red', 'Opacity', 1);
-    RGB = insertShape(RGB, 'FilledCircle',[ pozicija(yColNum,:) 10], 'Color', 'blue', 'Opacity', 1);
+    RGB = insertShape(RGB, 'FilledCircle',[ position(xColNum,:) 10], 'Color', 'red', 'Opacity', 1);
+    RGB = insertShape(RGB, 'FilledCircle',[ position(yColNum,:) 10], 'Color', 'blue', 'Opacity', 1);
     imshow(RGB,'Parent', handles.axes1);
 end
+end
+
+
+% --- Executes when figure1 is resized.
+function figure1_ResizeFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on selection change in electrode1.
+function electrode1_Callback(hObject, eventdata, handles)
+% hObject    handle to electrode1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns electrode1 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from electrode1
+
+
+% --- Executes during object creation, after setting all properties.
+function electrode1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to electrode1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in electrode2.
+function electrode2_Callback(hObject, eventdata, handles)
+% hObject    handle to electrode2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns electrode2 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from electrode2
+
+
+% --- Executes during object creation, after setting all properties.
+function electrode2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to electrode2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
 end
